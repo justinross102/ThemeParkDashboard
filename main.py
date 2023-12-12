@@ -22,26 +22,15 @@ fig = px.bar(land_counts, x='Land', y='Count', title='Number of Attractions in E
 # Use use_container_width=True for better layout in Streamlit
 st.plotly_chart(fig, use_container_width=True)
 
-#name_df = df[df['name'] == selected_name]
-#if name_df.empty:
-#    st.write('Name not found')
-#else:
-#    fig = px.line(name_df, x='year', y='n', color='sex',
-#                  color_discrete_sequence=px.colors.qualitative.Set2)
-#    st.plotly_chart(fig)
 
-# remember, each attraction is listed twice. Once for Friday and again for Saturday
-# as a result, we need to remove duplicates to get an accurate count of each park's attractions
+# Dropdown for selecting categories
+selected_parks = st.multiselect("Select Park(s)", df['park'].unique())
 
+# Filter the DataFrame based on selected parks
+filtered_df = df[df['park'].isin(selected_parks)].drop_duplicates(subset='attraction')
 
+# Group by park and count attractions
+park_attraction_counts = filtered_df.groupby('park')['attraction'].count()
 
-# sns.countplot(x='park', data=parks_no_duplicates)
-
-# # rotate x-axis tick labels for better readability
-# plt.xticks(rotation=45)
-
-# plt.title('Number of Attractions')
-# plt.xlabel('Theme Park')
-# plt.xticks(ha='right')  # adjust alignment for better readability
-# plt.ylabel('Number of Attractions')
-# plt.show()
+# Create a bar graph
+st.bar_chart(park_attraction_counts)
