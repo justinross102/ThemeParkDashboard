@@ -78,6 +78,10 @@ top_attractions = filtered_df_by_park_open.nlargest(5, f'wait_time_{wait_time_co
 column_names = {'attraction': 'Attraction', f'wait_time_{wait_time_column}': 'Wait Time'}
 top_attractions = top_attractions.rename(columns=column_names)
 
+# Display the top attractions and wait times in an interactive table
+st.markdown("###### Top 5 Attractions with Highest Wait Times")
+st.dataframe(top_attractions)
+
 # Find the top 5 attractions with the smallest wait times for the selected park
 top_attractions_smallest = filtered_df_by_park_open.nsmallest(5, f'wait_time_{wait_time_column}')[['attraction', f'wait_time_{wait_time_column}']].reset_index(drop=True)
 
@@ -85,15 +89,8 @@ top_attractions_smallest = filtered_df_by_park_open.nsmallest(5, f'wait_time_{wa
 column_names_mapping = {'attraction': 'Attraction', f'wait_time_{wait_time_column}': 'Wait Time'}
 top_attractions_smallest = top_attractions_smallest.rename(columns=column_names_mapping)
 
-data_container = st.container()
-
-with data_container:
-    table, plot = st.columns(2)
-    with table:
-        st.markdown("###### Top 5 Attractions with Highest Wait Times")
-        st.dataframe(top_attractions)
-    with plot:
-        st.markdown("###### Top 5 Attractions with Lowest Wait Times")
-        st.dataframe(top_attractions_smallest)
+st.markdown("###### Top 5 Attractions with Lowest Wait Times")
+st.dataframe(top_attractions_smallest)
 
 st.divider()
+
