@@ -18,8 +18,9 @@ st.write("Use this interactive plot to compare the number of attractions across 
 selected_parks = st.multiselect("Select Multiple Parks", df['park'].unique())
 filtered_df = df[df['park'].isin(selected_parks)].drop_duplicates(subset='attraction')
 park_attraction_counts = filtered_df.groupby('park')['attraction'].count().reset_index()
+park_attraction_counts = park_attraction_counts.rename(columns={'attraction': 'attractions'})
 
-fig = px.bar(park_attraction_counts, title = 'Number of Attractions in Selected Parks', x = 'park', y = 'attraction', color = 'park')
+fig = px.bar(park_attraction_counts, title = 'Number of Attractions in Selected Parks', x = 'park', y = 'attractions', color = 'park')
 fig.update_layout(xaxis = dict(tickangle=45))
 st.plotly_chart(fig)
 
@@ -29,6 +30,8 @@ st.subheader("Attraction Counts in Theme Park Lands")
 st.write("""Each theme park usually has a variety of smaller lands within the larger park.
          Each land houses any number of rides and other attractions. Select a theme park below
          and see how many attractions are located in each land!""")
+st.write("""Note: Some parks do not have their attractions grouped into lands. In those cases,
+         this graph will show the different attraction categories instead of lands.""")
 
 selected_park = st.selectbox('Select a Park', df['park'].unique())
 selected_park_df = df[df['park'] == selected_park].drop_duplicates(subset='attraction')
@@ -47,6 +50,8 @@ st.divider() # Highest and Lowest Wait Times
 st.subheader("Highest and Lowest Wait Times")
 st.write("""The tables below display the attractions with the top five highest and lowest wait times.
          Select a day and a park, and then use the slider to choose which time of day!""")
+st.write("""Note: Some parks were closed at the time I collected the data. As a result, certain selections
+         will have empty charts.""")
 
 selected_day = st.selectbox("Select a Day", df['day'].unique(), key="day_selector")
 filtered_df = df[df['day'] == selected_day]
@@ -67,9 +72,11 @@ filtered_data = filtered_df[(filtered_df['park'] == selected_park) & (filtered_d
 
 # top 5 attractions with highest wait times
 top_attractions = filtered_data.nlargest(5, f'wait_time_{daytime}')[['attraction', f'wait_time_{daytime}']].reset_index(drop=True)
+top_attractions.index += 1
 
 # top 5 attractions with smallest wait times
 bottom_attractions = filtered_data.nsmallest(5, f'wait_time_{daytime}')[['attraction', f'wait_time_{daytime}']].reset_index(drop=True)
+bottom_attractions.index += 1
 
 # relabel
 column_names = {'attraction': 'Attraction', f'wait_time_{daytime}': 'Wait Time'}
@@ -102,7 +109,7 @@ melted_df['is_open'] = melted_df['is_open'].apply(lambda x: 'Open' if x == 1 els
 count_df = melted_df.groupby(['time_of_day', 'is_open']).size().reset_index(name='count')
 
 fig = px.bar(count_df, x='time_of_day', y='count', color='is_open', barmode='group',
-            labels={'count': 'Number of Attractions', 'time_of_day': 'Time of Day'},
+            labels={'count': 'Number of Attractions', 'time_of_day': 'Time of Day', 'is_open': 'Status'},
             category_orders={'time_of_day': ['is_open_M', 'is_open_A', 'is_open_E']},
             color_discrete_map={'Open': 'green', 'Closed': 'red'},
             title=f'Ride Closures at {selected_park} on {selected_day}')
@@ -170,4 +177,5 @@ st.divider()
 
 st.write("""Thank you so much for visiting this dashboard. If you're interested in learning more about how I did
          this project, feel free to check out my [blog](https://justinross102.github.io/386-blog/fourth-post/)
-         and GitHub [repository](https://github.com/justinross102/ThemeParkWaitTimes_EDA).""")
+         and GitHub [repository](https://github.com/justinross102/ThemeParkWaitTimes_EDA). You can view the code
+         I used to make this dashboard [here](https://github.com/justinross102/ThemeParkDashboard).""")
