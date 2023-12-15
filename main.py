@@ -9,6 +9,14 @@ st.title('Visualizing Theme Park Data')
 url = 'https://github.com/justinross102/ThemeParkWaitTimes_EDA/raw/main/wait_times.csv'
 df = pd.read_csv(url)
 
+st.write("""If you are anything like me, you love trips to theme parks. Incredible theming, soaring music,
+         exhilarating rides, and delicious food combine to form a fantastic experience, so long as the wait
+         times aren't too long. With there being so much to see and do, long wait times for attractions can
+         (and often do) negatively impact the plans of excited park guests.""")
+         
+st.write("""This dashboard will allow you to explore wait time data collected from various theme parks across
+         the United States! Perhaps this tool can help you plan your next theme park vacation!""")
+
 st.divider() # Comparing Attraction Counts Across Parks
 
 st.subheader("Comparing Attraction Counts Across Parks")
